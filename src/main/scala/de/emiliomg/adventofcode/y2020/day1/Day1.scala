@@ -10,4 +10,14 @@ object Day1 {
 
     result.head
   }
+
+  def star2(data: List[Int]): Int = {
+    val result = for {
+      a <- data
+      b <- data
+      c <- data
+      if a + b + c == 2020
+    } yield a * b * c
+    result.head
+  }
 }

@@ -7,16 +7,30 @@ import scala.io.Source
 
 class Day1Test extends AnyFlatSpec with Matchers {
   "Star 1" should "work with the test input" in {
-    val sample = List(1721, 979, 366, 299, 675, 1456)
-    Day1.star1(sample) shouldEqual 514579
+    Day1.star1(getTestInput) shouldEqual 514579
   }
 
   it should "work with the puzzle input" in {
-    val data = getData("day1/input.txt")
-    Day1.star1(data) shouldEqual 539851
+    val result = Day1.star1(getPuzzleInput)
+    println(result)
+    result shouldEqual 539851
   }
 
-  private def getData(path: String): List[Int] = {
-    Source.fromResource(path).getLines().toList.map(_.toInt)
+  "Star 2" should "work with the test input" in {
+    Day1.star2(getTestInput) shouldEqual 241861950
+  }
+
+  it should "work with the puzzle input" in {
+    val result = Day1.star2(getPuzzleInput)
+    println(result)
+    result shouldEqual 212481360
+  }
+
+  private def getTestInput: List[Int] = {
+    List(1721, 979, 366, 299, 675, 1456)
+  }
+
+  private def getPuzzleInput: List[Int] = {
+    Source.fromResource("day1/input.txt").getLines().toList.map(_.toInt)
   }
 }
