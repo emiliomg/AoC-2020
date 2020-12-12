@@ -16,15 +16,26 @@ class Day2Test extends AnyFlatSpec with Matchers {
     result shouldEqual 586
   }
 
-  def getTestInput: List[PasswordValidation] = {
-    val raw = List(
+  "Star 2" should "work with the test input" in {
+    Day2.star2(getTestInput) shouldEqual 1
+  }
+
+  it should "work with the puzzle input" in {
+    val result = Day2.star2(getPuzzleInput)
+    println(result)
+  }
+
+  def getTestInput: List[String] = {
+    List(
       "1-3 a: abcde",
       "1-3 b: cdefg",
       "2-9 c: ccccccccc"
     )
-    raw.map(PasswordValidation.fromString)
   }
 
-  def getPuzzleInput: List[PasswordValidation] =
-    Source.fromResource("day2/input.txt").getLines().toList.map(PasswordValidation.fromString)
+  def getPuzzleInput: List[String] =
+    Source
+      .fromResource("day2/input.txt")
+      .getLines()
+      .toList
 }
