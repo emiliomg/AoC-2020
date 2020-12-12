@@ -1,4 +1,4 @@
-package de.emiliomg.adventofcode.y2020.day3
+package de.emiliomg.adventofcode.y2020
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -42,6 +42,6 @@ class Day3Test extends AnyFlatSpec with Matchers {
   }
 
   def getPuzzleInput: Array[String] = {
-    Source.fromResource("day3/input.txt").getLines().toArray
+    Source.fromResource("day3.txt").getLines().toArray
   }
 }

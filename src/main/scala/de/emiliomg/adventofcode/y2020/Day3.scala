@@ -1,4 +1,4 @@
-package de.emiliomg.adventofcode.y2020.day3
+package de.emiliomg.adventofcode.y2020
 
 import scala.annotation.tailrec
 

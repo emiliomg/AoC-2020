@@ -1,4 +1,4 @@
-package de.emiliomg.adventofcode.y2020.day2
+package de.emiliomg.adventofcode.y2020
 
 object Day2 {
   def star1(data: List[String]): Int = {

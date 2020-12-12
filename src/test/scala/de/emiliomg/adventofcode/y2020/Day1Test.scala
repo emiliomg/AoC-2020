@@ -1,4 +1,4 @@
-package de.emiliomg.adventofcode.y2020.day1
+package de.emiliomg.adventofcode.y2020
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -31,6 +31,6 @@ class Day1Test extends AnyFlatSpec with Matchers {
   }
 
   private def getPuzzleInput: List[Int] = {
-    Source.fromResource("day1/input.txt").getLines().toList.map(_.toInt)
+    Source.fromResource("day1.txt").getLines().toList.map(_.toInt)
   }
 }
