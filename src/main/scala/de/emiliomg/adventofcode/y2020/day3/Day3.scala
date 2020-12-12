@@ -7,6 +7,17 @@ object Day3 {
     traverseMap(data, 3, 1)
   }
 
+  def star2(data: Array[String]): Long = {
+    val x = List(
+      (1, 1),
+      (3, 1),
+      (5, 1),
+      (7, 1),
+      (1, 2)
+    ).map(slope => traverseMap(data, slope._1, slope._2)).map(_.toLong)
+    x.product
+  }
+
   private def traverseMap(data: Array[String], rightOffset: Int, downOffset: Int): Int = {
     val cols = data(0).length
     val rows = data.length
