@@ -13,11 +13,22 @@ class Day6Test extends AnyFlatSpec with Matchers {
   it should "work with the puzzle data" in {
     val result = Day6.star1(getPuzzleInput)
     println(s"Day6, Star1: $result")
+    result shouldEqual 6799
   }
 
-  val getPuzzleInput: String = Source.fromResource("day6.txt").getLines().mkString("\n")
+  "Star2" should "work with the test data" in {
+    Day6.star2(getTestInput) shouldEqual 6
+  }
 
-  val getTestInput: String =
+  it should "work with the puzzle data" in {
+    val result = Day6.star2(getPuzzleInput)
+    println(s"Day6, Star2: $result")
+    result shouldEqual 3354
+  }
+
+  def getPuzzleInput: String = Source.fromResource("day6.txt").getLines().mkString("\n")
+
+  def getTestInput: String =
     """abc
       |
       |a
