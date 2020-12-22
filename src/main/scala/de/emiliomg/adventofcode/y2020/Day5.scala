@@ -4,11 +4,27 @@ import scala.annotation.tailrec
 
 object Day5 {
   def star1(data: List[String]): Int = {
+    getSeatIds(data).max
+  }
+
+  def star2(data: List[String]): Int = {
+    @tailrec
+    def step(ids: List[Int]): Int =
+      ids match {
+        case _ :: Nil                  => throw new Exception("End of list reached, this should not happen")
+        case x :: y :: _ if x + 1 != y => x + 1
+        case _ :: tail                 => step(tail)
+      }
+    val seatIds: List[Int] = getSeatIds(data).sorted
+    step(seatIds)
+  }
+
+  def getSeatIds(data: List[String]): List[Int] = {
     data.map { pass =>
       val row = getRow(pass.substring(0, 7))
       val col = getColumn(pass.substring(7))
       (row * 8) + col
-    }.max
+    }
   }
 
   def getRow(input: String): Int = {

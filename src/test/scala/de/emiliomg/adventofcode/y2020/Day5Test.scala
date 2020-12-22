@@ -15,6 +15,13 @@ class Day5Test extends AnyFlatSpec with Matchers with TableDrivenPropertyChecks 
   it should "work with the puzzle input" in {
     val result = Day5.star1(getPuzzleInput)
     println(s"Day5, Star1: $result")
+    result shouldEqual 944
+  }
+
+  "Star 2" should "work with the puzzle input" in {
+    val result = Day5.star2(getPuzzleInput)
+    println(s"Day 5, Star2: $result")
+    result shouldEqual 554
   }
 
   "RangeStepper" should "work with the provided samples" in {
@@ -37,13 +44,14 @@ class Day5Test extends AnyFlatSpec with Matchers with TableDrivenPropertyChecks 
     }
   }
 
-  val testPassports: TableFor3[String, Int, Int] = Table(
-    ("boardingPass", "expectedRow", "expectedColumn"),
-    ("FBFBBFFRLR", 44, 5),
-    ("BFFFBBFRRR", 70, 7),
-    ("FFFBBBFRRR", 14, 7),
-    ("BBFFBBFRLL", 102, 4)
-  )
+  def testPassports: TableFor3[String, Int, Int] =
+    Table(
+      ("boardingPass", "expectedRow", "expectedColumn"),
+      ("FBFBBFFRLR", 44, 5),
+      ("BFFFBBFRRR", 70, 7),
+      ("FFFBBBFRRR", 14, 7),
+      ("BBFFBBFRLL", 102, 4)
+    )
 
   /*
   FBFBBFFRLR
@@ -61,21 +69,22 @@ class Day5Test extends AnyFlatSpec with Matchers with TableDrivenPropertyChecks 
   L means to take the lower half, keeping columns 4 through 5.
   The final R keeps the upper of the two, column 5.
    */
-  val testSteps: TableFor3[Range.Inclusive, Boolean, Range.Inclusive] = Table(
-    ("startRange", "getUpper", "resultRange"),
-    (0.to(127), false, 0.to(63)),
-    (0.to(63), true, 32.to(63)),
-    (32.to(63), false, 32.to(47)),
-    (32.to(47), true, 40.to(47)),
-    (40.to(47), true, 44.to(47)),
-    (44.to(47), false, 44.to(45)),
-    (44.to(45), false, 44.to(44)),
-    (0.to(7), true, 4.to(7)),
-    (4.to(7), false, 4.to(5)),
-    (4.to(5), true, 5.to(5))
-  )
+  def testSteps: TableFor3[Range.Inclusive, Boolean, Range.Inclusive] =
+    Table(
+      ("startRange", "getUpper", "resultRange"),
+      (0.to(127), false, 0.to(63)),
+      (0.to(63), true, 32.to(63)),
+      (32.to(63), false, 32.to(47)),
+      (32.to(47), true, 40.to(47)),
+      (40.to(47), true, 44.to(47)),
+      (44.to(47), false, 44.to(45)),
+      (44.to(45), false, 44.to(44)),
+      (0.to(7), true, 4.to(7)),
+      (4.to(7), false, 4.to(5)),
+      (4.to(5), true, 5.to(5))
+    )
 
-  val getTestInput: List[String] = List("FBFBBFFRLR", "BFFFBBFRRR", "FFFBBBFRRR", "BBFFBBFRLL")
+  def getTestInput: List[String] = List("FBFBBFFRLR", "BFFFBBFRRR", "FFFBBBFRRR", "BBFFBBFRLL")
 
-  val getPuzzleInput: List[String] = Source.fromResource("day5.txt").getLines().toList
+  def getPuzzleInput: List[String] = Source.fromResource("day5.txt").getLines().toList
 }
