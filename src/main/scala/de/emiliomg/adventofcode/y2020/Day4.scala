@@ -88,18 +88,11 @@ object Day4 {
     Start ~ passports ~ End
   }
   def passports[_: P]: P[Seq[Passport]] =
-    (passport ~ ("\n\n" ~ passport).rep.?).map {
-      case (head, Some(tail)) => head +: tail
-      case (head, None)       => Seq(head)
-    }
+    passport.rep(min = 1, sep = "\n\n")
 
   def passport[_: P]: P[Passport] =
-    (passportContent ~ ((" " | "\n") ~ passportContent).rep(1).?)
-      .map {
-        case (head, Some(tail)) => head +: tail
-        case (head, None)       => Seq(head)
-      }
-      .map(Passport)
+    passportContent.rep(sep = "\n").rep(sep = " ").map(p => Passport(p.flatten))
+
   def passportContent[_: P]: P[PassportContent] =
     expirationYear | birthYear | issueYear | height | hairColor | eyeColor | passportId | countryId
 
