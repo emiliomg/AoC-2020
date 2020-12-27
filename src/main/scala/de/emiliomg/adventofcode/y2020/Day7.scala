@@ -18,6 +18,24 @@ object Day7 {
     step(Set("shiny gold"), Set(), bags)
   }
 
+  def star2(data: String): Int = {
+    def findBag(name: String, bags: Seq[Bag]) =
+      bags.find(_.name == name).getOrElse(throw new Exception(s"Bag '$name' not found, uh-oh"))
+
+    def getTotalBagAmount(bag: Bag, bags: Seq[Bag]): Int = {
+      val childrenWeight = bag.children.map {
+        case (name, cnt) =>
+          val childBag = findBag(name, bags)
+          cnt * getTotalBagAmount(childBag, bags)
+      }.sum
+      1 + childrenWeight
+    }
+
+    val bags        = parseData(data)
+    val startingBag = findBag("shiny gold", bags)
+    getTotalBagAmount(startingBag, bags) - 1 //remove the shiny gold bag itself, only the children are of interest to us
+  }
+
   private def parseData(data: String): Seq[Bag] = {
     parse(data, parseBags(_)) match {
       case Parsed.Success(result, _) =>
