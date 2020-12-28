@@ -13,6 +13,52 @@ object Day8 {
     val m = Machine(raw)
     step(m, List())
   }
+
+  def star2(raw: String): Int = {
+    case object MachineLoopException extends Exception
+
+    def runMachine(initialMachine: Machine): Int = {
+      @tailrec
+      def step(m: Machine, alreadyRun: List[Int]): Int = {
+        if (alreadyRun.contains(m.currentPos)) throw MachineLoopException
+        else if (m.currentPos == m.data.length) m.acc
+        else step(m.step(), alreadyRun.appended(m.currentPos))
+      }
+      step(initialMachine, List())
+    }
+
+    @tailrec
+    def modifyMachine(initialMachine: Machine, modifyStepFromHere: Int): (Machine, Int) = {
+      initialMachine.data(modifyStepFromHere) match {
+        case ("nop", p) =>
+          val newMachine = initialMachine.copy(data = initialMachine.data.updated(modifyStepFromHere, "jmp" -> p))
+          newMachine -> modifyStepFromHere
+        case ("jmp", p) =>
+          val newMachine = initialMachine.copy(data = initialMachine.data.updated(modifyStepFromHere, "nop" -> p))
+          newMachine -> modifyStepFromHere
+        case _ => modifyMachine(initialMachine, modifyStepFromHere + 1)
+      }
+    }
+
+    def run(initialMachine: Machine, modifyStepFromHere: Int): (Int, Int) = {
+      if (modifyStepFromHere > initialMachine.data.length)
+        throw new Exception("all modification exhausted, this should not happen")
+      val (newMachine, modifiedStep) = modifyMachine(initialMachine, modifyStepFromHere)
+
+      try {
+        val result = runMachine(newMachine)
+        result -> modifiedStep
+      } catch {
+        case MachineLoopException => run(initialMachine, modifiedStep + 1)
+      }
+    }
+
+    val m                      = Machine(raw)
+    val (result, modifiedStep) = run(m, 0)
+    println(s"Result $result after modifying step $modifiedStep")
+
+    result
+  }
 }
 
 case class Machine(data: Array[(String, Int)], currentPos: Int, acc: Int) {

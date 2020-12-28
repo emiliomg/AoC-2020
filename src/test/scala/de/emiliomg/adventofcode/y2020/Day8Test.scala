@@ -16,6 +16,16 @@ class Day8Test extends AnyFlatSpec with Matchers {
     result shouldEqual 1782
   }
 
+  "Star2" should "work with the test data" in {
+    Day8.star2(getTestInput) shouldEqual 8
+  }
+
+  it should "work with the puzzle data" in {
+    val result = Day8.star2(getPuzzleInput)
+    println(s"Day8, Star2: $result")
+    result shouldEqual 797
+  }
+
   def getTestInput: String =
     """nop +0
       |acc +1
