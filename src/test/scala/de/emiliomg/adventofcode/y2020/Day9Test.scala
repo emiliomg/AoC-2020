@@ -10,10 +10,20 @@ class Day9Test extends AnyFlatSpec with Matchers {
     Day9.star1(getTestInput, 5) shouldEqual 127
   }
 
-  "Star1" should "work with the puzzle data" in {
+  it should "work with the puzzle data" in {
     val result = Day9.star1(getPuzzleInput, 25)
     println(s"Day9, Star1: $result")
     result shouldEqual 257342611
+  }
+
+  "Star2" should "work with the test data" in {
+    Day9.star2(getTestInput, 5) shouldEqual 62
+  }
+
+  it should "work with the puzzle input" in {
+    val result = Day9.star2(getPuzzleInput, 25)
+    println(s"Day9, Star2: $result")
+    result shouldEqual 35602097
   }
 
   def getTestInput: String =
