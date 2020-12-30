@@ -17,6 +17,21 @@ class Day10Test extends AnyFlatSpec with Matchers {
   it should "work with the puzzle data" in {
     val result = Day10.star1(getPuzzleInput)
     println(s"Day10, Star1: $result")
+    result shouldEqual 2738
+  }
+
+  "Star2" should "work with the small test data" in {
+    Day10.star2(getSmallTestInput) shouldEqual 8
+  }
+
+  it should "work with the large test data" in {
+    Day10.star2(getLargeTestInput) shouldEqual 19208
+  }
+
+  it should "work with the puzzle data" in {
+    val result = Day10.star2(getPuzzleInput)
+    println(s"Day10, Star2: $result")
+    result shouldEqual 74049191673856L
   }
 
   def getSmallTestInput: String =
