@@ -12,105 +12,91 @@ object Day12 {
     raw.split("\n").toList.map(Instruction.apply)
   }
 
-  def processDirections(initialDirections: List[Instruction]): Int = {
+  def processDirections(initialInstructions: List[Instruction]): Int = {
     @tailrec
-    def step(data: List[Instruction], dir: Direction, pos: Position): Int =
+    def step(data: List[Instruction], ship: Ship): Int =
       data match {
         case Nil =>
-          math.abs(pos.xPos) + math.abs(pos.yPos)
-        case nextStep :: tail =>
-          nextStep match {
-            case Instruction(Command.North, p) => step(tail, dir, pos.copy(xPos = pos.xPos + p))
-            case Instruction(Command.South, p) => step(tail, dir, pos.copy(xPos = pos.xPos - p))
-            case Instruction(Command.East, p)  => step(tail, dir, pos.copy(yPos = pos.yPos + p))
-            case Instruction(Command.West, p)  => step(tail, dir, pos.copy(yPos = pos.yPos - p))
-            case Instruction(Command.Left, p)  => step(tail, dir.turnLeft(p), pos)
-            case Instruction(Command.Right, p) => step(tail, dir.turnRight(p), pos)
-            case Instruction(Command.Forward, p) => {
-              val newInstruction = dir match {
-                case Direction.North => Instruction(Command.North, p)
-                case Direction.South => Instruction(Command.South, p)
-                case Direction.East  => Instruction(Command.East, p)
-                case Direction.West  => Instruction(Command.West, p)
-              }
-              step(newInstruction +: tail, dir, pos)
-            }
-          }
+          math.abs(ship.position.xPos) + math.abs(ship.position.yPos)
+        case nextInstruction :: tail => step(tail, ship.runInstruction(nextInstruction))
       }
 
-    step(initialDirections, Direction.East, Position(0, 0))
+    step(initialInstructions, Ship(90, Position(0, 0)))
   }
-
-  case class Instruction(command: Command, parameter: Int)
-
-  object Instruction {
-    def apply(raw: String): Instruction = {
-      val (rc, rp) = raw.splitAt(1)
-      val p        = rp.toInt
-      rc match {
-        case "N" => new Instruction(Command.North, p)
-        case "S" => new Instruction(Command.South, p)
-        case "E" => new Instruction(Command.East, p)
-        case "W" => new Instruction(Command.West, p)
-        case "L" => new Instruction(Command.Left, p)
-        case "R" => new Instruction(Command.Right, p)
-        case "F" => new Instruction(Command.Forward, p)
-      }
-    }
-  }
-
-  sealed trait Command
-  object Command {
-    case object North   extends Command
-    case object South   extends Command
-    case object East    extends Command
-    case object West    extends Command
-    case object Left    extends Command
-    case object Right   extends Command
-    case object Forward extends Command
-  }
-
-  sealed trait Direction {
-    def ownDegree: Int
-    def allowedDegrees: List[Int] = List(0, 90, 180, 270, 360)
-
-    def turnLeft(deg: Int): Direction = {
-      if (!allowedDegrees.contains(deg)) throw new Exception(s"Turn by $deg not allowed!")
-      val newDeg = ownDegree - deg
-
-      if (newDeg < 0) Direction(360 + newDeg)
-      else Direction(newDeg)
-    }
-
-    def turnRight(deg: Int): Direction = {
-      if (!allowedDegrees.contains(deg)) throw new Exception(s"Turn by $deg not allowed!")
-      val newDeg = (ownDegree + deg) % 360
-      Direction(newDeg)
-    }
-  }
-  object Direction {
-    def apply(deg: Int): Direction =
-      deg match {
-        case 0   => North
-        case 90  => East
-        case 180 => South
-        case 270 => West
-        case x   => throw new Exception(s"Direction for degree $x not defined!")
-      }
-
-    case object North extends Direction {
-      override def ownDegree: Int = 0
-    }
-    case object East extends Direction {
-      override def ownDegree: Int = 90
-    }
-    case object South extends Direction {
-      override def ownDegree: Int = 180
-    }
-    case object West extends Direction {
-      override def ownDegree: Int = 270
-    }
-  }
-
-  case class Position(xPos: Int, yPos: Int)
 }
+
+case class Ship(degree: Int, position: Position) {
+  val allowedDegrees: List[Int] = List(0, 90, 180, 270, 360)
+
+  def runInstruction(instruction: Instruction): Ship =
+    instruction match {
+      case Instruction(Action.MoveNorth, p)   => moveNorth(p)
+      case Instruction(Action.MoveSouth, p)   => moveSouth(p)
+      case Instruction(Action.MoveEast, p)    => moveEast(p)
+      case Instruction(Action.MoveWest, p)    => moveWest(p)
+      case Instruction(Action.RotateLeft, p)  => turnLeft(p)
+      case Instruction(Action.RotateRight, p) => turnRight(p)
+      case Instruction(Action.MoveForward, p) => {
+        degree match {
+          case 0   => moveNorth(p)
+          case 180 => moveSouth(p)
+          case 90  => moveEast(p)
+          case 270 => moveWest(p)
+        }
+      }
+    }
+
+  private def moveNorth(p: Int): Ship = this.copy(position = position.copy(xPos = position.xPos + p))
+  private def moveSouth(p: Int): Ship = this.copy(position = position.copy(xPos = position.xPos - p))
+  private def moveEast(p: Int): Ship  = this.copy(position = position.copy(yPos = position.yPos + p))
+  private def moveWest(p: Int): Ship  = this.copy(position = position.copy(yPos = position.yPos - p))
+
+  private def turnLeft(deg: Int): Ship = {
+    if (!allowedDegrees.contains(deg)) throw new Exception(s"Turn by $deg not allowed!")
+    val newDeg = {
+      val tmp = degree - deg
+      if (tmp < 0) 360 + tmp
+      else tmp
+    }
+
+    Ship(newDeg, position)
+  }
+
+  private def turnRight(deg: Int): Ship = {
+    if (!allowedDegrees.contains(deg)) throw new Exception(s"Turn by $deg not allowed!")
+    val newDeg = (degree + deg) % 360
+
+    Ship(newDeg, position)
+  }
+}
+
+case class Instruction(command: Action, parameter: Int)
+
+object Instruction {
+  def apply(raw: String): Instruction = {
+    val (rc, rp) = raw.splitAt(1)
+    val p        = rp.toInt
+    rc match {
+      case "N" => new Instruction(Action.MoveNorth, p)
+      case "S" => new Instruction(Action.MoveSouth, p)
+      case "E" => new Instruction(Action.MoveEast, p)
+      case "W" => new Instruction(Action.MoveWest, p)
+      case "L" => new Instruction(Action.RotateLeft, p)
+      case "R" => new Instruction(Action.RotateRight, p)
+      case "F" => new Instruction(Action.MoveForward, p)
+    }
+  }
+}
+
+sealed trait Action
+object Action {
+  case object MoveNorth   extends Action
+  case object MoveSouth   extends Action
+  case object MoveEast    extends Action
+  case object MoveWest    extends Action
+  case object RotateLeft  extends Action
+  case object RotateRight extends Action
+  case object MoveForward extends Action
+}
+
+case class Position(xPos: Int, yPos: Int)
