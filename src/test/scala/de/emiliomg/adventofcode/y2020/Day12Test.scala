@@ -18,6 +18,16 @@ class Day12Test extends AnyFlatSpec with Matchers with TableDrivenPropertyChecks
     result shouldEqual 1424
   }
 
+  "Star2" should "work with the test input" in {
+    Day12.star2(getTestInput) shouldEqual 286
+  }
+
+  it should "work with the puzzle input" in {
+    val result = Day12.star2(getPuzzleInput)
+    println(s"Day12, Star2: $result")
+    result shouldEqual 63447
+  }
+
   def getTestInput: String =
     """F10
       |N3
