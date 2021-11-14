@@ -27,8 +27,11 @@ object Day13 {
     val requiredArrivalOrder: Seq[(Int, Int)] =
       busIds.zipWithIndex.filterNot(_._1 == "x").map { case (s, ix) => s.toInt -> ix }
 
+    // a (_ + 1) works as well, but since the first ts HAS to be a multiple of the first bus id, we can save time by increasing in multiples of this id.
+    // We add the positional offset as well in case the usable bus id is not the first entry in the list (i.e. the list starts with at lease one "x" that gets discarded)
+    // .iterate(0L)(_ + (requiredArrivalOrder.head._1 + requiredArrivalOrder.head._2))
     val result: Long = Iterator
-      .iterate(0L)(_ + 1)
+      .iterate(0L)(_ + (requiredArrivalOrder.head._1 + requiredArrivalOrder.head._2))
       .dropWhile { ts =>
         !requiredArrivalOrder.forall {
           case (busId, expectedTimeOffset) =>
@@ -39,7 +42,9 @@ object Day13 {
       .to(Iterable)
       .head
 
+    println("busIds")
     pprint.pprintln(busIds)
+    println("result")
     pprint.pprintln(result)
 
     result

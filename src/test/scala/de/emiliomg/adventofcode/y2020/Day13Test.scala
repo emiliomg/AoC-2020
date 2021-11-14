@@ -13,7 +13,7 @@ class Day13Test extends AnyFlatSpec with Matchers with TableDrivenPropertyChecks
 
   it should "work with the puzzle input" in {
     val result = Day13.star1(getPuzzleInput)
-    println(s"Day13, Star1 $result")
+    println(s"Day13, Star1: $result")
     result shouldEqual 8063
   }
 
@@ -23,6 +23,11 @@ class Day13Test extends AnyFlatSpec with Matchers with TableDrivenPropertyChecks
         Day13.star2(input) shouldEqual expectedResult
     }
   }
+
+  // it should "work with the puzzle input" in {
+  //   val result: Long = Day13.star2(getPuzzleInput)
+  //   println(s"Day13, Star2: $result")
+  // }
 
   def getTestInputStar1: String =
     """939
