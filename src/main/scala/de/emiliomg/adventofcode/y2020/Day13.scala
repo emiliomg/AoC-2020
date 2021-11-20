@@ -1,5 +1,7 @@
 package de.emiliomg.adventofcode.y2020
 
+import scala.util.Try
+
 object Day13 {
   def star1(raw: String): Int = {
     val (earliestTimestamp: Int, allIds: Seq[String]) = parseData(raw)
@@ -22,30 +24,56 @@ object Day13 {
     (earliestBusTimestamp - earliestTimestamp) * earliestBusId
   }
 
-  def star2(raw: String): Long = {
-    val (_, busIds) = parseData(raw)
-    val requiredArrivalOrder: Seq[(Int, Int)] =
-      busIds.zipWithIndex.filterNot(_._1 == "x").map { case (s, ix) => s.toInt -> ix }
+  case class BusDeparture(id: Int, tsOffset: Int)
 
-    // a (_ + 1) works as well, but since the first ts HAS to be a multiple of the first bus id, we can save time by increasing in multiples of this id.
-    // We add the positional offset as well in case the usable bus id is not the first entry in the list (i.e. the list starts with at lease one "x" that gets discarded)
-    // .iterate(0L)(_ + (requiredArrivalOrder.head._1 + requiredArrivalOrder.head._2))
-    val result: Long = Iterator
-      .iterate(0L)(_ + (requiredArrivalOrder.head._1 + requiredArrivalOrder.head._2))
-      .dropWhile { ts =>
-        !requiredArrivalOrder.forall {
-          case (busId, expectedTimeOffset) =>
-            (ts + expectedTimeOffset) % busId == 0
+  def star2(raw: String): Long = {
+
+    // 3417L
+    // Array(BusDeparture(17, 0), BusDeparture(13, 2), BusDeparture(19, 3))
+    def step(busArrivals: Array[BusDeparture], busPtr: Int, curTs: Long, stepSize: Long): Long = {
+
+      // println(s"busPrt: $busPtr, curTs: $curTs, stepSize: $stepSize")
+
+      // if (curTs > 3417) {
+      //   println("oh noes")
+      //   System.exit(0)
+      // }
+
+      val isMatch = busArrivals.forall {
+        case BusDeparture(id, tsOffset) =>
+          (curTs + tsOffset) % id == 0
+      }
+
+      if (isMatch) {
+        println(s"SUCCESS: $curTs")
+        curTs
+      } else {
+        val curBus: BusDeparture             = busArrivals(busPtr)
+        val nextBusOpt: Option[BusDeparture] = Try(busArrivals(busPtr + 1)).toOption
+
+        nextBusOpt match {
+          case None =>
+            step(busArrivals, busPtr, curTs + stepSize, stepSize)
+          case Some(nextBus) =>
+            if ((curTs + nextBus.tsOffset) % nextBus.id == 0) {
+              step(busArrivals, busPtr + 1, curTs + nextBus.id, nextBus.id)
+            } else {
+              step(busArrivals, busPtr, curTs + stepSize, stepSize)
+            }
         }
       }
-      .take(1)
-      .to(Iterable)
-      .head
+    }
 
-    println("busIds")
-    pprint.pprintln(busIds)
-    println("result")
-    pprint.pprintln(result)
+    val (_, busIds) = parseData(raw)
+    val requiredArrivalOrder: Array[BusDeparture] =
+      busIds.zipWithIndex
+        .filterNot(_._1 == "x")
+        .map { case (id, tsOffset) => BusDeparture(id.toInt, tsOffset) }
+        .toArray
+
+    // pprint.pprintln(requiredArrivalOrder)
+
+    val result: Long = step(requiredArrivalOrder, 0, 0, requiredArrivalOrder(0).id)
 
     result
   }

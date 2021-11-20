@@ -35,6 +35,7 @@ class Day13Test extends AnyFlatSpec with Matchers with TableDrivenPropertyChecks
 
   val testInputDay2 = Table(
     ("schedule", "expectedTimestamp"),
+    ("123\n2,x,5", 8L),
     ("123\n7,13,x,x,59,x,31,19", 1068781L),
     ("123\n17,x,13,19", 3417L),
     ("123\n67,7,59,61", 754018L),
